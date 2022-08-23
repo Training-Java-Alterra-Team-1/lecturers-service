@@ -20,7 +20,7 @@ public class LecturersController {
 
     @SneakyThrows(Exception.class)
     @PostMapping(path = "/dosen/add", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> addNewLecturer(LecturersDto request){
+    public ResponseEntity<Object> addNewLecturer(@RequestBody LecturersDto request){
         log.info("api POST /dosen/add is hit.");
         return lecturersService.addLecturer(request);
     }
