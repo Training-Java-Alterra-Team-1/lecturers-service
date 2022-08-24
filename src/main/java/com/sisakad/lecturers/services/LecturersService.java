@@ -29,25 +29,26 @@ public class LecturersService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
+        Map<String, Object> response = new HashMap<String, Object>();
         if(request.getMajorId() == null || request.getMajorId() == 0){
-            Map<String, Object> errResp = new HashMap<String, Object>();
-            errResp.put("error_message", "Field majorId is mandatory and its value cannot be 0");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(errResp);
+            response.put("message", "failed");
+            response.put("error", "Field majorId is mandatory and its value cannot be 0");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
         }
         if(request.getLecturerName() == null || request.getLecturerName() == ""){
-            Map<String, Object> errResp = new HashMap<String, Object>();
-            errResp.put("error_message", "Field lecturerName is mandatory");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(errResp);
+            response.put("message", "failed");
+            response.put("error", "Field lecturerName is mandatory");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
         }
         if(request.getDob() == null){
-            Map<String, Object> errResp = new HashMap<String, Object>();
-            errResp.put("error_message", "Field dob is mandatory");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(errResp);
+            response.put("message", "failed");
+            response.put("error", "Field dob is mandatory");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
         }
         if(request.getGender() == null || request.getGender() == ""){
-            Map<String, Object> errResp = new HashMap<String, Object>();
-            errResp.put("error_message", "Field gender is mandatory");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(errResp);
+            response.put("message", "failed");
+            response.put("error", "Field gender is mandatory");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
         }
 
         Lecturers lecturer = new Lecturers();
@@ -61,8 +62,10 @@ public class LecturersService {
         lecturer.setCreatedAt(todayDateTime);
 
         lecturersRepository.save(lecturer);
+        response.put("message", "success");
+        response.put("data", lecturer);
 
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(request);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
     }
 
     @SneakyThrows(Exception.class)
@@ -72,8 +75,11 @@ public class LecturersService {
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         List<Lecturers> lecturers = lecturersRepository.findAll();
+        Map<String, Object> response = new HashMap<String, Object>();
+        response.put("message", "success");
+        response.put("data", lecturers);
 
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(lecturers);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
     }
 
     @SneakyThrows(Exception.class)
@@ -82,15 +88,16 @@ public class LecturersService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        if(lecturerId == null || lecturerId == 0){
-            Map<String, Object> errResp = new HashMap<String, Object>();
-            errResp.put("error_message", "LecturerId is mandatory and its value cannot be 0");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(errResp);
+        Lecturers lecturer = lecturersRepository.findLecturersById(lecturerId);
+        Map<String, Object> response = new HashMap<String, Object>();
+        if(!Optional.ofNullable(lecturer).isPresent()) {
+            response.put("message", "failed");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(headers).body(response);
         }
 
-        Lecturers lecturers = lecturersRepository.findLecturersById(lecturerId);
-
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(lecturers);
+        response.put("message", "success");
+        response.put("data", lecturer);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
     }
 
     @SneakyThrows(Exception.class)
@@ -99,20 +106,21 @@ public class LecturersService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        List<Lecturers> resp = new ArrayList<Lecturers>();
+        List<Lecturers> lecturers = new ArrayList<Lecturers>();
 
-        if(
-                (name == null || name == "") &&
-                        (dob == null) &&
-                        (address == null || address == "") &&
-                        (gender == null || gender == "")
-        ){
-            resp = lecturersRepository.findAll();
+        if((name == null || name == "")
+                && (dob == null)
+                && (address == null || address == "")
+                && (gender == null || gender == "")){
+            lecturers = lecturersRepository.findAll();
         }else{
-            resp = lecturersRepository.findLecturersByNameContainingIgnoreCaseOrDobOrGenderOrAddressContainingIgnoreCase(name, dob, gender, address);
+            lecturers = lecturersRepository.findLecturersByNameContainingIgnoreCaseOrDobOrGenderOrAddressContainingIgnoreCase(name, dob, gender, address);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(resp);
+        Map<String, Object> response = new HashMap<String, Object>();
+        response.put("message", "success");
+        response.put("data", lecturers);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
     }
 
     @SneakyThrows(Exception.class)
@@ -121,42 +129,32 @@ public class LecturersService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        if(lecturerId == null || lecturerId == 0){
-            Map<String, Object> errResp = new HashMap<String, Object>();
-            errResp.put("error_message", "LecturerId is mandatory and its value cannot be 0");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(errResp);
+        Lecturers lecturer = lecturersRepository.findLecturersById(lecturerId);
+        Map<String, Object> response = new HashMap<String, Object>();
+        if(!Optional.ofNullable(lecturer).isPresent()) {
+            response.put("message", "failed");
+            response.put("error", "Not found!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(headers).body(response);
         }
 
-        Lecturers updatedData = lecturersRepository.findLecturersById(lecturerId);
-        if(updatedData == null){
-            Map<String, Object> errResp = new HashMap<String, Object>();
-            errResp.put("error_message", "Lecturer data by id " + lecturerId + " not found.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(errResp);
-        }else{
-            if(request.getMajorId() == 0){
-                Map<String, Object> errResp = new HashMap<String, Object>();
-                errResp.put("error_message", "Field majorId value cannot be 0");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(errResp);
-            }
-            if(request.getLecturerName() != null && request.getLecturerName() != ""){
-                updatedData.setName(request.getLecturerName());
-            }
-            if(request.getDob() != null){
-                updatedData.setDob(request.getDob());
-            }
-            if(request.getGender() != null || request.getGender() != ""){
-                updatedData.setGender(request.getGender());
-            }
-            if(request.getAddress() != null || request.getAddress() != ""){
-                updatedData.setAddress(request.getAddress());
-            }
+        if(request.getMajorId() == 0){
+            response.put("message", "failed");
+            response.put("error", "Field majorId value cannot be 0");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
         }
+
+        if(request.getLecturerName() != null && request.getLecturerName() != "") lecturer.setName(request.getLecturerName());
+        if(request.getDob() != null) lecturer.setDob(request.getDob());
+        if(request.getGender() != null || request.getGender() != "") lecturer.setGender(request.getGender());
+        if(request.getAddress() != null || request.getAddress() != "") lecturer.setAddress(request.getAddress());
 
         LocalDateTime todayDateTime = LocalDateTime.now();
-        updatedData.setUpdatedAt(todayDateTime);
-        lecturersRepository.save(updatedData);
+        lecturer.setUpdatedAt(todayDateTime);
+        lecturersRepository.save(lecturer);
 
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(request);
+        response.put("message", "success");
+        response.put("data", lecturer);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
     }
 
     @SneakyThrows(Exception.class)
@@ -165,22 +163,18 @@ public class LecturersService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        if(lecturerId == null || lecturerId == 0){
-            Map<String, Object> errResp = new HashMap<String, Object>();
-            errResp.put("error_message", "LecturerId is mandatory and its value cannot be 0");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(errResp);
+        Lecturers lecturer = lecturersRepository.findLecturersById(lecturerId);
+        Map<String, Object> response = new HashMap<String, Object>();
+        if(!Optional.ofNullable(lecturer).isPresent()) {
+            response.put("message", "failed");
+            response.put("error", "Not found!");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(headers).body(response);
         }
 
-        Lecturers data = lecturersRepository.findLecturersById(lecturerId);
-        if(data == null){
-            Map<String, Object> errResp = new HashMap<String, Object>();
-            errResp.put("error_message", "Lecturer data by id " + lecturerId + " not found.");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(errResp);
-        }
+        lecturersRepository.delete(lecturer);
 
-        lecturersRepository.delete(data);
-
-        String respon = "Lecturer " + data.getName() + " has been deleted.";
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(respon);
+        response.put("message", "success");
+        response.put("data", "Selected lecturer has been deleted");
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
     }
 }

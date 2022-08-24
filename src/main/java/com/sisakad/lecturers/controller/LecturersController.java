@@ -19,45 +19,45 @@ public class LecturersController {
     private LecturersService lecturersService;
 
     @SneakyThrows(Exception.class)
-    @PostMapping(path = "/dosen/add", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/lecturer", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> addNewLecturer(@RequestBody LecturersDto request){
-        log.info("api POST /dosen/add is hit.");
+        log.info("api POST /lecturer is hit.");
         return lecturersService.addLecturer(request);
     }
 
     @SneakyThrows(Exception.class)
-    @GetMapping(path = "/dosen/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/lecturer/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getLecturer(@PathVariable Integer id){
-        log.info("api GET /dosen/{id} is hit.");
+        log.info("api GET /lecturer/{id} is hit.");
         return lecturersService.getLecturerById(id);
     }
 
     @SneakyThrows(Exception.class)
-    @GetMapping(path = "/dosen", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/lecturer", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getLecturerData(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Date dob,
             @RequestParam(required = false) String address,
             @RequestParam(required = false) String gender
     ){
-        log.info("api GET /dosen?name={name}&dob={dob}&address={address}&gender={gender} is hit.");
+        log.info("api GET /lecturer?name={name}&dob={dob}&address={address}&gender={gender} is hit.");
         return lecturersService.getLecturerByData(name, dob, address, gender);
     }
 
     @SneakyThrows(Exception.class)
-    @PutMapping(path = "/dosen/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/lecturer/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getLecturerData(
             @PathVariable Integer id,
             @RequestBody LecturersDto request
     ){
-        log.info("api PUT /dosen/{id} is hit.");
+        log.info("api PUT /lecturer/{id} is hit.");
         return lecturersService.updateLecturerData(id, request);
     }
 
     @SneakyThrows(Exception.class)
-    @DeleteMapping(path = "/dosen/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/lecturer/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getLecturerData(@PathVariable Integer id){
-        log.info("api PUT /dosen/{id} is hit.");
+        log.info("api PUT /lecturer/{id} is hit.");
         return lecturersService.deleteLecturerData(id);
     }
 }
