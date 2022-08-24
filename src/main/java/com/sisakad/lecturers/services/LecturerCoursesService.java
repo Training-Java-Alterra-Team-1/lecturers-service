@@ -36,13 +36,13 @@ public class LecturerCoursesService {
         Map<String, Object> response = new HashMap<String, Object>();
         for(LecturerCoursesDto item: request){
             if(item.getLecturerId() == null || item.getLecturerId() == 0){
-                response.put("message", "failed");
+                response.put("success", false);
                 response.put("error", "Field lecturerId is mandatory and its value cannot be 0");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
             }
             if(item.getCourseId() == null || item.getCourseId() == 0){
-                response.put("message", "failed");
-                response.put("error_message", "Field courseId is mandatory and its value cannot be 0");
+                response.put("success", false);
+                response.put("error", "Field courseId is mandatory and its value cannot be 0");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
             }
 
@@ -70,8 +70,8 @@ public class LecturerCoursesService {
             lecturerCoursesRepository.save(data);
         }
 
-        response.put("message", "success");
-        response.put("error", "Courses have been linked to selected lecturer");
+        response.put("success", true);
+        response.put("message", "Courses have been linked to selected lecturer");
         return  ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
     }
 }

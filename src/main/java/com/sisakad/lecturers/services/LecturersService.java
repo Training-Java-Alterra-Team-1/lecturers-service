@@ -31,22 +31,22 @@ public class LecturersService {
 
         Map<String, Object> response = new HashMap<String, Object>();
         if(request.getMajorId() == null || request.getMajorId() == 0){
-            response.put("message", "failed");
+            response.put("success", false);
             response.put("error", "Field majorId is mandatory and its value cannot be 0");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
         }
         if(request.getLecturerName() == null || request.getLecturerName() == ""){
-            response.put("message", "failed");
+            response.put("success", false);
             response.put("error", "Field lecturerName is mandatory");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
         }
         if(request.getDob() == null){
-            response.put("message", "failed");
+            response.put("success", false);
             response.put("error", "Field dob is mandatory");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
         }
         if(request.getGender() == null || request.getGender() == ""){
-            response.put("message", "failed");
+            response.put("success", false);
             response.put("error", "Field gender is mandatory");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
         }
@@ -62,7 +62,7 @@ public class LecturersService {
         lecturer.setCreatedAt(todayDateTime);
 
         lecturersRepository.save(lecturer);
-        response.put("message", "success");
+        response.put("success", true);
         response.put("data", lecturer);
 
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
@@ -76,7 +76,7 @@ public class LecturersService {
 
         List<Lecturers> lecturers = lecturersRepository.findAll();
         Map<String, Object> response = new HashMap<String, Object>();
-        response.put("message", "success");
+        response.put("success", true);
         response.put("data", lecturers);
 
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
@@ -91,11 +91,12 @@ public class LecturersService {
         Lecturers lecturer = lecturersRepository.findLecturersById(lecturerId);
         Map<String, Object> response = new HashMap<String, Object>();
         if(!Optional.ofNullable(lecturer).isPresent()) {
-            response.put("message", "failed");
+            response.put("success", false);
+            response.put("message", "Not found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(headers).body(response);
         }
 
-        response.put("message", "success");
+        response.put("success", true);
         response.put("data", lecturer);
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
     }
@@ -118,7 +119,7 @@ public class LecturersService {
         }
 
         Map<String, Object> response = new HashMap<String, Object>();
-        response.put("message", "success");
+        response.put("success", true);
         response.put("data", lecturers);
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
     }
@@ -132,13 +133,13 @@ public class LecturersService {
         Lecturers lecturer = lecturersRepository.findLecturersById(lecturerId);
         Map<String, Object> response = new HashMap<String, Object>();
         if(!Optional.ofNullable(lecturer).isPresent()) {
-            response.put("message", "failed");
-            response.put("error", "Not found!");
+            response.put("success", false);
+            response.put("error", "Not found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(headers).body(response);
         }
 
         if(request.getMajorId() == 0){
-            response.put("message", "failed");
+            response.put("success", false);
             response.put("error", "Field majorId value cannot be 0");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
         }
@@ -152,7 +153,7 @@ public class LecturersService {
         lecturer.setUpdatedAt(todayDateTime);
         lecturersRepository.save(lecturer);
 
-        response.put("message", "success");
+        response.put("success", false);
         response.put("data", lecturer);
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
     }
@@ -166,15 +167,15 @@ public class LecturersService {
         Lecturers lecturer = lecturersRepository.findLecturersById(lecturerId);
         Map<String, Object> response = new HashMap<String, Object>();
         if(!Optional.ofNullable(lecturer).isPresent()) {
-            response.put("message", "failed");
+            response.put("success", false);
             response.put("error", "Not found!");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).headers(headers).body(response);
         }
 
         lecturersRepository.delete(lecturer);
 
-        response.put("message", "success");
-        response.put("data", "Selected lecturer has been deleted");
+        response.put("success", true);
+        response.put("message", "Selected lecturer has been deleted");
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
     }
 }
