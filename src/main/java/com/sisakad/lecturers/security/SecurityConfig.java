@@ -16,7 +16,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers("/swagger-ui/*", "/swagger-ui.html", "/webjars/**", "/v2/**", "/swagger-resources/**").permitAll();
-        http.authorizeRequests().antMatchers("/api/v1/mapping/**", "/api/v1/dosen/**").hasAnyAuthority("ROLE_LECTURER", "ROLE_ADMIN");
+        http.authorizeRequests().antMatchers("/api/v1/lecturer/**").hasAnyAuthority("ROLE_LECTURER", "ROLE_ADMIN");
         http.authorizeRequests().anyRequest().fullyAuthenticated();
         http.addFilterBefore(new CustomAuthorization(), UsernamePasswordAuthenticationFilter.class);
     }

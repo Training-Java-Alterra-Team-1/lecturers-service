@@ -23,9 +23,9 @@ public class LecturerCoursesController {
     private LecturerCoursesService lcService;
 
     @SneakyThrows(Exception.class)
-    @PostMapping(path = "/mapping/dosen-matakuliah", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/lecturer/courses", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> addNewLecturer(@RequestBody List<LecturerCoursesDto> request){
-        log.info("api POST /mapping/dosen-matakuliah is hit.");
+        log.info("api POST /lecturer/courses is hit.");
         return lcService.addLecturerCoursesMapping(request);
     }
 }

@@ -33,16 +33,17 @@ public class LecturerCoursesService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
+        Map<String, Object> response = new HashMap<String, Object>();
         for(LecturerCoursesDto item: request){
             if(item.getLecturerId() == null || item.getLecturerId() == 0){
-                Map<String, Object> errResp = new HashMap<String, Object>();
-                errResp.put("error_message", "Field lecturerId is mandatory and its value cannot be 0");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(errResp);
+                response.put("success", false);
+                response.put("error", "Field lecturerId is mandatory and its value cannot be 0");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
             }
             if(item.getCourseId() == null || item.getCourseId() == 0){
-                Map<String, Object> errResp = new HashMap<String, Object>();
-                errResp.put("error_message", "Field courseId is mandatory and its value cannot be 0");
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(errResp);
+                response.put("success", false);
+                response.put("error", "Field courseId is mandatory and its value cannot be 0");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).headers(headers).body(response);
             }
 
             List<LecturerCourses> findData = lecturerCoursesRepository.findLecturerCoursesByLecturersId(item.getLecturerId());
@@ -69,6 +70,8 @@ public class LecturerCoursesService {
             lecturerCoursesRepository.save(data);
         }
 
-        return  ResponseEntity.status(HttpStatus.OK).headers(headers).body(request);
+        response.put("success", true);
+        response.put("message", "Courses have been linked to selected lecturer");
+        return  ResponseEntity.status(HttpStatus.OK).headers(headers).body(response);
     }
 }
